@@ -71,6 +71,7 @@ function AddItemForm({ onNewItem }) {
     const { Form, InputGroup, Button } = ReactBootstrap;
 
     const [newItem, setNewItem] = React.useState('');
+    const [category, setCategory] = React.useState('home');
     const [submitting, setSubmitting] = React.useState(false);
 
     const submitNewItem = e => {
@@ -78,7 +79,7 @@ function AddItemForm({ onNewItem }) {
         setSubmitting(true);
         fetch('/items', {
             method: 'POST',
-            body: JSON.stringify({ name: newItem }),
+            body: JSON.stringify({ name: newItem, category }),
             headers: { 'Content-Type': 'application/json' },
         })
             .then(r => r.json())
@@ -86,6 +87,7 @@ function AddItemForm({ onNewItem }) {
                 onNewItem(item);
                 setSubmitting(false);
                 setNewItem('');
+                setCategory('home');
             });
     };
 
@@ -99,6 +101,16 @@ function AddItemForm({ onNewItem }) {
                     placeholder="New Item"
                     aria-describedby="basic-addon1"
                 />
+                <Form.Control
+                    as="select"
+                    value={category}
+                    onChange={e => setCategory(e.target.value)}
+                    className="ml-2"
+                >
+                    <option value="home">Home</option>
+                    <option value="hobbies">Hobbies</option>
+                    <option value="work">Work</option>
+                </Form.Control>
                 <InputGroup.Append>
                     <Button
                         type="submit"
@@ -123,6 +135,7 @@ function ItemDisplay({ item, onItemUpdate, onItemRemoval }) {
             body: JSON.stringify({
                 name: item.name,
                 completed: !item.completed,
+                category: item.category,
             }),
             headers: { 'Content-Type': 'application/json' },
         })
@@ -158,8 +171,11 @@ function ItemDisplay({ item, onItemUpdate, onItemRemoval }) {
                         />
                     </Button>
                 </Col>
-                <Col xs={10} className="name">
+                <Col xs={9} className="name">
                     {item.name}
+                </Col>
+                <Col xs={1} className={`category-label ${item.category}`}>
+                    {item.category}
                 </Col>
                 <Col xs={1} className="text-center remove">
                     <Button
