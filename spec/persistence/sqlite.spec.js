@@ -6,6 +6,7 @@ const ITEM = {
     id: '7aef3d7c-d301-4846-8358-2a91ec9d6be3',
     name: 'Test',
     completed: false,
+    category: 'home',
 };
 
 beforeEach(() => {
@@ -62,4 +63,55 @@ test('it can get a single item', async () => {
 
     const item = await db.getItem(ITEM.id);
     expect(item).toEqual(ITEM);
+});
+
+test('it can store and retrieve items with category', async () => {
+    await db.init();
+
+    const itemWithCategory = { ...ITEM, category: 'work' };
+    await db.storeItem(itemWithCategory);
+
+    const items = await db.getItems();
+    expect(items.length).toBe(1);
+    expect(items[0]).toEqual(itemWithCategory);
+});
+
+test('it can update an existing item with category', async () => {
+    await db.init();
+
+    const initialItems = await db.getItems();
+    expect(initialItems.length).toBe(0);
+
+    const itemWithCategory = { ...ITEM, category: 'work' };
+    await db.storeItem(itemWithCategory);
+
+    await db.updateItem(
+        ITEM.id,
+        Object.assign({}, itemWithCategory, { completed: !ITEM.completed }),
+    );
+
+    const items = await db.getItems();
+    expect(items.length).toBe(1);
+    expect(items[0].completed).toBe(!ITEM.completed);
+    expect(items[0].category).toBe('work');
+});
+
+test('it can remove an existing item with category', async () => {
+    await db.init();
+    const itemWithCategory = { ...ITEM, category: 'work' };
+    await db.storeItem(itemWithCategory);
+
+    await db.removeItem(ITEM.id);
+
+    const items = await db.getItems();
+    expect(items.length).toBe(0);
+});
+
+test('it can get a single item with category', async () => {
+    await db.init();
+    const itemWithCategory = { ...ITEM, category: 'work' };
+    await db.storeItem(itemWithCategory);
+
+    const item = await db.getItem(ITEM.id);
+    expect(item).toEqual(itemWithCategory);
 });
