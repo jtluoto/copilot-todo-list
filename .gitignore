@@ -29,7 +29,6 @@ Dockerfile
 .DS_Store
 
 # Ignore any other files or directories that are not needed for version control
-*.md
 *.json
 *.ts
 src/types/*
