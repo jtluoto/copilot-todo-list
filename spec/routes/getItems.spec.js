@@ -1,6 +1,6 @@
 const db = require('../../src/persistence');
 const getItems = require('../../src/routes/getItems');
-const ITEMS = [{ id: 12345 }];
+const ITEMS = [{ id: 12345, category: 'Work' }];
 
 jest.mock('../../src/persistence', () => ({
     getItems: jest.fn(),
@@ -16,4 +16,5 @@ test('it gets items correctly', async () => {
     expect(db.getItems.mock.calls.length).toBe(1);
     expect(res.send.mock.calls[0].length).toBe(1);
     expect(res.send.mock.calls[0][0]).toEqual(ITEMS);
+    expect(ITEMS[0].category).toBe('Work');
 });
