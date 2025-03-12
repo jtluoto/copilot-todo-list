@@ -71,6 +71,7 @@ function AddItemForm({ onNewItem }) {
     const { Form, InputGroup, Button } = ReactBootstrap;
 
     const [newItem, setNewItem] = React.useState('');
+    const [category, setCategory] = React.useState('home');
     const [submitting, setSubmitting] = React.useState(false);
 
     const submitNewItem = e => {
@@ -78,7 +79,7 @@ function AddItemForm({ onNewItem }) {
         setSubmitting(true);
         fetch('/items', {
             method: 'POST',
-            body: JSON.stringify({ name: newItem }),
+            body: JSON.stringify({ name: newItem, category }),
             headers: { 'Content-Type': 'application/json' },
         })
             .then(r => r.json())
@@ -86,6 +87,7 @@ function AddItemForm({ onNewItem }) {
                 onNewItem(item);
                 setSubmitting(false);
                 setNewItem('');
+                setCategory('home');
             });
     };
 
@@ -99,6 +101,15 @@ function AddItemForm({ onNewItem }) {
                     placeholder="New Item"
                     aria-describedby="basic-addon1"
                 />
+                <Form.Control
+                    as="select"
+                    value={category}
+                    onChange={e => setCategory(e.target.value)}
+                >
+                    <option value="home">Home</option>
+                    <option value="hobbies">Hobbies</option>
+                    <option value="work">Work</option>
+                </Form.Control>
                 <InputGroup.Append>
                     <Button
                         type="submit"
@@ -115,7 +126,7 @@ function AddItemForm({ onNewItem }) {
 }
 
 function ItemDisplay({ item, onItemUpdate, onItemRemoval }) {
-    const { Container, Row, Col, Button } = ReactBootstrap;
+    const { Container, Row, Col, Button, Badge } = ReactBootstrap;
 
     const toggleCompletion = () => {
         fetch(`/items/${item.id}`, {
@@ -134,6 +145,19 @@ function ItemDisplay({ item, onItemUpdate, onItemRemoval }) {
         fetch(`/items/${item.id}`, { method: 'DELETE' }).then(() =>
             onItemRemoval(item),
         );
+    };
+
+    const getCategoryColor = category => {
+        switch (category) {
+            case 'home':
+                return 'success';
+            case 'hobbies':
+                return 'primary';
+            case 'work':
+                return 'danger';
+            default:
+                return 'secondary';
+        }
     };
 
     return (
@@ -158,8 +182,13 @@ function ItemDisplay({ item, onItemUpdate, onItemRemoval }) {
                         />
                     </Button>
                 </Col>
-                <Col xs={10} className="name">
+                <Col xs={9} className="name">
                     {item.name}
+                </Col>
+                <Col xs={1} className="text-center">
+                    <Badge variant={getCategoryColor(item.category)}>
+                        {item.category}
+                    </Badge>
                 </Col>
                 <Col xs={1} className="text-center remove">
                     <Button
