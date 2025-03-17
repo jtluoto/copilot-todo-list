@@ -37,3 +37,15 @@ body {
 button:focus {
     border: 1px solid #333;
 }
+
+.category-label.home {
+    color: blue;
+}
+
+.category-label.hobbies {
+    color: green;
+}
+
+.category-label.work {
+    color: red;
+}
