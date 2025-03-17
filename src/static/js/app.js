@@ -71,6 +71,7 @@ function AddItemForm({ onNewItem }) {
     const { Form, InputGroup, Button } = ReactBootstrap;
 
     const [newItem, setNewItem] = React.useState('');
+    const [category, setCategory] = React.useState('Work');
     const [submitting, setSubmitting] = React.useState(false);
 
     const submitNewItem = e => {
@@ -78,7 +79,7 @@ function AddItemForm({ onNewItem }) {
         setSubmitting(true);
         fetch('/items', {
             method: 'POST',
-            body: JSON.stringify({ name: newItem }),
+            body: JSON.stringify({ name: newItem, category: category }),
             headers: { 'Content-Type': 'application/json' },
         })
             .then(r => r.json())
@@ -86,6 +87,7 @@ function AddItemForm({ onNewItem }) {
                 onNewItem(item);
                 setSubmitting(false);
                 setNewItem('');
+                setCategory('Work');
             });
     };
 
@@ -99,6 +101,15 @@ function AddItemForm({ onNewItem }) {
                     placeholder="New Item"
                     aria-describedby="basic-addon1"
                 />
+                <Form.Control
+                    as="select"
+                    value={category}
+                    onChange={e => setCategory(e.target.value)}
+                >
+                    <option value="Work">Work</option>
+                    <option value="Personal">Personal</option>
+                    <option value="Other">Other</option>
+                </Form.Control>
                 <InputGroup.Append>
                     <Button
                         type="submit"

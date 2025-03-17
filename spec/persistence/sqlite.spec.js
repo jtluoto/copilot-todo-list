@@ -6,6 +6,7 @@ const ITEM = {
     id: '7aef3d7c-d301-4846-8358-2a91ec9d6be3',
     name: 'Test',
     completed: false,
+    category: 'Work'
 };
 
 beforeEach(() => {
@@ -44,6 +45,7 @@ test('it can update an existing item', async () => {
     const items = await db.getItems();
     expect(items.length).toBe(1);
     expect(items[0].completed).toBe(!ITEM.completed);
+    expect(items[0].category).toBe(ITEM.category);
 });
 
 test('it can remove an existing item', async () => {
